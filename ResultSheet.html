@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+        }
+        body{
+            /* padding: 50px; */
+            display: flex;
+            justify-content: center;
+            padding: 50px;
+            background-color: rgb(249, 243, 243);
+        }
+
+        .result-sheet{
+            width: auto;
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-content: center;
+            justify-content: center;
+            background-color: rgb(255, 255, 255);
+        }
+
+        .result-sheet h3{
+            display: flex;
+            justify-content: center;
+        }
+
+        .marks-row{
+            margin-top: 10px;
+            display: flex;
+            justify-content: flex-start;
+            gap: 20px;
+        }
+
+        .marks-row input{
+            padding:4px;
+            border-radius: 4px;
+            background-color: white;
+            border: 1px solid black;
+            
+        }
+
+
+        .marks-row button {
+            margin-left: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: rgb(255, 0, 0);
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            color: white;
+            transition: background-color 0.3s ease; /* Add a smooth transition effect */
+        }
+
+        .marks-row button:hover {
+            background-color: rgb(200, 0, 0); /* Change background color on hover */
+        }
+
+        .button-container{
+            margin-top: 30px;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: flex-start;
+            /* position: relative;
+            left: -150px; */
+        }
+
+        .button-container button{
+            border-radius: 5px;
+            border: hidden;
+            background-color: rgb(115, 255, 0);
+            padding: 8px;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 10px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .marks-row p{
+            width: 30px;
+        }
+
+        #average-container{
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            gap: 300px;
+            margin-top: 20px;
+        }
+
+        #average-container button {
+            background-color: rgb(0, 56, 186);
+            color: white;
+            border: hidden;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="result-sheet">
+        <h3>Result Sheet</h3>
+ 
+        <div class="button-container">
+            <button onclick="createMarkRow()">Add New Subject</button>
+        </div>
+
+        <div id="mark-row-conntainer">
+            <div class="marks-row">
+                <input type="text" placeholder="Subject Name" />
+                <input type="number" placeholder="Marks" onchange="updateGrade(this)" />
+                <p>N/A</p>
+            </div>
+            <div class="marks-row">
+                <input type="text" placeholder="Subject Name" />
+                <input type="number" placeholder="Marks" onchange="updateGrade(this)" /> <!--updateGrade එක පාස් කරනවා -->
+                <p>N/A</p>
+            </div>
+        </div>
+
+        <div id="average-container">
+            <button onclick="CalculateAverage()">Calculate Average</button>
+            <p id="average">0%</p>
+        </div>
+    </div>
+
+    <script>
+        function createMarkRow(){ //row ක්‍රියේට් කර ගන්න function
+
+            let markRow = document.createElement('div'); //එලිමන්ට් එක ක්‍රියේට් කරන්න ප්‍රධාන div එකට variable එකක් හදා ගන්නවා
+            markRow.classList.add('marks-row'); //marksrow div එකට අදාල (marks-row) class එක add කිරීම
+
+            let subjectInput = document.createElement('input'); //එලිමන්ට් එක ක්‍රියේට් කරන්න input එකට variable එකක් හදා ගන්නවා
+            subjectInput.placeholder = "Subject Name"; //placeholder දා ගනනවා input එකට
+
+            let markInput = document.createElement('input');  //එලිමන්ට් එක ක්‍රියේට් කරන්න input එකට variable එකක් හදා ගන්නවා
+            markInput.placeholder = "Marks";  //placeholder දා ගනනවා input එකට
+            markInput.type="number"; //type එක දා ගනනවා input එකට
+            markInput.addEventListener('change',function(){  //EventListener ඇඩ් කිරීම 
+                updateGrade(this); //updateGrade පන්ශන් එක පස් කරනවා
+            });
+
+
+            let grade = document.createElement('p');    //එලිමන්ට් එක ක්‍රියේට් කරන්න p එකට variable එකක් හදා ගන්නවා
+            grade.innerText = 'N/A'; //div එක ක්‍රියේට් කරද්දී grade එක්ක නෑ. ඒ නිසා N/A එක පස්ස් කරනවා
+
+           // markRow.appendChild(subjectInput);  //එලිමන්ට් inputs/p tags සියල්ල markRow එක තුල නිසා child විදිහට හදා ගන්නවා
+           // markRow.appendChild(markInput);
+           // markRow.appendChild(grade);
+
+
+            let removeButton = document.createElement('button');
+            removeButton.innerText = 'Remove Subject';
+            removeButton.onclick = function () {
+                removeSubject(markRow);
+            };
+
+
+
+            markRow.append(subjectInput, markInput, grade, removeButton); //එලිමන්ට් inputs/p tags සියල්ල එකවර markRow එක තුල නිසා child විදිහට හදා ගන්නවා (කලින් තනි තනි විදිහට් නැතුව එක පාර appen දාලා)(ඔර්ඩර් එක මාරු කරන්නත් පුලුවන්)
+
+            let markRowContainer = document.getElementById('mark-row-conntainer');//මේ එලිමට් div tag එක සියල්ලටම පොදු හා parant වෙන නිසා row create කරන්න මේක ගන්නවා
+            markRowContainer.appendChild(markRow); // markRowContainer එකට appendChild කරනවා markRow ව. (markRow තුල තමා අනිත් input/p appendChild කරලා තියෙන්නේ කලින් )
+
+        }
+
+        function removeSubject(subjectRow) {
+            let markRowContainer = document.getElementById('mark-row-conntainer');
+            markRowContainer.removeChild(subjectRow);
+        }
+
+
+
+        function updateGrade(input){     //input එකක් ක්‍රියේට් කරලා marks දුන්නම් එකට අදාල grade එක display කිරීම
+           
+            // console.log(input.parentElement); //log.(input.parentElement) දුන්නම input ට අදාල parent element එක ගන්න පුලුවන්
+            // console.log(grade);
+            
+            let grade = input.parentElement.querySelector('p'); //මෙතනදී input හරහා parentElement එකේ querySelector හරහා p ටැග් දෙක catch කර ගන්නවා (මේ දැනට html ටග් වලින් හදලා තියෙන ප්ලේස් එකට දාන්න)
+            let marks = input.value;
+
+            if (marks >= 50){
+                // console.log('A');
+                grade.innerText = 'A';
+            }else if (marks >= 60){
+                // console.log('B');
+                grade.innerText = 'B';
+            }else if (marks >= 55){
+                // console.log('C');
+                grade.innerText = 'C';
+            }else if (marks >= 35){
+                // console.log('S');
+                grade.innerText = 'S';
+            }else {
+                // console.log('F');
+                grade.innerText = 'F';
+            }
+        }
+
+        function CalculateAverage(){
+            let markeInputs = document.querySelectorAll('.marks-row input[type="number"]'); //.marks-row කියන ක්ලාස් එකේ input වල type එක number වෙන ඉන්පුට් ගන්න
+
+            let totalMarks = 0;
+
+            markeInputs.forEach (function(input){
+                totalMarks += parseInt(input.value);
+            });
+
+
+            let average = totalMarks / markeInputs.length;
+
+            document.getElementById('average').innerText = "Average Marks : " + average.toFixed(2) + '%'; 
+
+            console.log(average);
+        }
+        
+
+    </script>
+</body>
+</html>
